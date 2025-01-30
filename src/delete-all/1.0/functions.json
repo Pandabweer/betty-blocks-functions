@@ -1,0 +1,112 @@
+{
+  "description": "Step to remove records from a model, without the 200 limit and the option to filter and remove relational data.",
+  "label": "Delete All Records",
+  "category": "CRUD",
+  "icon": {
+    "color": "Pink",
+    "name": "TrashIcon"
+  },
+  "options": [
+    {
+      "name": "model",
+      "label": "Model",
+      "info": "The model for which you want to delete all records.",
+      "meta": {
+        "type": "Model",
+        "validations": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "amountToDelete",
+      "info": "When deleting huge ammount of records at once, we will limit the total ammount of records to be deleted to this number. Keep in mind this is from the parent record, this amount does not consider child relations if enabled",
+      "label": "Limit the number of parent records to delete",
+      "meta": {
+        "type": "Number",
+        "validations": {
+          "min": 1,
+          "max": 200000
+        }
+      },
+      "configuration": {
+        "placeholder": "40000"
+      }
+    },
+    {
+      "name": "batchSize",
+      "info": "Deleting records in larger batches will increase performance, however if the batch size is too big it could decrease the amount deleted because it will first initiate a list to delete first.",
+      "label": "Batch size",
+      "meta": {
+        "type": "Number",
+        "default": 5000,
+        "validations": {
+          "required": true,
+          "min": 1,
+          "max": 200000
+        }
+      },
+      "configuration": {
+        "placeholder": "5000"
+      }
+    },
+    {
+      "name": "keepParent",
+      "label": "Keep parent",
+      "info": "If the records from this model don't have to be deleted but relational data has to be deleted.",
+      "meta": {
+        "type": "Boolean",
+        "default": false
+      }
+    },
+    {
+      "name": "relationData",
+      "label": "Relational data",
+      "info": "Specify the relational data to be deleted. Provide relation and the model that it is attached to this model, specifying a model and relation that does not exists on the model that got selected on top will result in an error.",
+      "meta": {
+        "type": "MultilineText"
+      },
+      "configuration": {
+        "placeholder": "{\n  \"exampleRelation\":{\n    \"modelName\":\"Import\",\n    \"keep\":true\n  },\n  \"relationName\":{\n    \"modelName\":\"Permit\",\n    \"keep\":true,\n    \"subRelations\":{\n      \"testingRelation\":{\n        \"modelName\":\"WebUser\",\n        \"keep\":true,\n        \"subRelations\":{\n          \"extraRelation\":{\n            \"modelName\":\"Roles\",\n            \"keep\":true,\n            \"subRelations\":{\n              \"maxFiveDeep\":{\n                \"modelName\":\"TestMaxDepth\",\n                \"keep\":false\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}"
+      }
+    },
+    {
+      "name": "relationVars",
+      "label": "Relation variables",
+      "info": "Variables to be used in the relation option.",
+      "meta": {
+        "type": "Map"
+      }
+    },
+    {
+      "name": "filter",
+      "label": "Filter",
+      "info": "Filter based on Data API filter with variable options.",
+      "meta": {
+        "type": "MultilineText"
+      },
+      "configuration": {
+        "placeholder": "_and: [\n  { status: { in: [\"Done\", \"On hold\"] } },\n  { author: { neq: null } }\n]"
+      }
+    },
+    {
+      "name": "filterVars",
+      "label": "Filter variables",
+      "info": "Variables to be used in the filter option.",
+      "meta": {
+        "type": "Map"
+      }
+    },
+    {
+      "name": "result",
+      "label": "Result",
+      "meta": {
+        "type": "Output",
+        "output": {
+          "type": "Text"
+        }
+      }
+    }
+  ],
+  "yields": "NONE"
+}
