@@ -45,7 +45,7 @@ describe("jwtDecode", () => {
     const invalidPayload = Buffer.from("{invalidJson:").toString("base64url");
     const token = `${header}.${invalidPayload}.signature`;
 
-    expect(() => jwtDecode(token)).toThrow(/Invalid token specified: Unexpected token/);
+    expect(() => jwtDecode(token)).toThrow(/^Invalid token specified:/);
   });
 
   it("should throw when token has no payload or header", () => {

@@ -3,14 +3,6 @@ import CryptoJS from "../src/utils/crypto/hmac-sha1.min.js";
 
 global.fetch = jest.fn();
 
-type MockResponse = {
-  ok: boolean;
-  status: number;
-  statusText: string;
-  text: () => Promise<string>;
-  headers?: unknown;
-};
-
 describe("oath1Request", () => {
   const fetchMock = fetch as jest.MockedFunction<typeof fetch>;
   const originalRandom = CryptoJS.lib.WordArray.random;

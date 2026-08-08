@@ -74,7 +74,7 @@ export function whereToString<T>(where: T, validate = true, _isRoot = true): str
     return _isRoot ? content : `{ ${content} }`;
   }
 
-  return typeof where === "string" ? `"${where}"` : String(where);
+  return typeof where === "string" ? JSON.stringify(where) : String(where);
 }
 
 export function whereToObject(where: string, validate = true): object {

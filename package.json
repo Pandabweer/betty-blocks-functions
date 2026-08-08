@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/package.json",
   "name": "app-functions",
   "version": "1.0.0",
   "private": "true",
@@ -8,29 +7,33 @@
     "test": "jest",
     "test:only-changed": "jest --onlyChanged",
     "test:cov": "jest --collect-coverage",
-    "lint": "eslint \"./src/**/**/*.{ts,json}\" \"./src/**/*.{ts,json}\" --fix",
+    "lint": "eslint \"./src/**/*.{ts,json}\" \"./tests/**/*.{ts,json}\"",
+    "lint:fix": "npm run lint -- --fix",
     "build": "rm -rf .tmp functions && npm run format && tsc -p ./tsconfig.json && rm -rf functions/utils/liquid.min.js && node post-build.mjs",
     "publish": "npm run build && npm run test && bb functions publish",
     "publish:no-test": "npm run build && bb functions publish",
     "update-packages": "ncu -u -x glob -x npm-check-updates -x @betty-blocks/cli && npm install"
   },
   "dependencies": {
-    "date-fns": "^4.1.0",
-    "remeda": "^2.33.6"
+    "date-fns": "^4.4.0",
+    "remeda": "^2.39.0"
   },
   "devDependencies": {
-    "@betty-blocks/cli": "25.108.0",
-    "@eslint/js": "^9.39.2",
+    "@betty-blocks/cli": "26.1.0",
+    "@eslint/js": "^10.0.1",
     "@types/jest": "^30.0.0",
-    "eslint": "^9.39.2",
-    "globals": "^17.3.0",
-    "npm-check-updates": "^18.0.1",
-    "prettier": "^3.8.1",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.55.0"
+    "eslint": "^10.8.1",
+    "globals": "^17.9.0",
+    "npm-check-updates": "^23.0.2",
+    "prettier": "^3.9.6",
+    "ts-jest": "^29.4.12",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.66.0"
   },
   "prettier": {
     "printWidth": 100
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
   }
 }

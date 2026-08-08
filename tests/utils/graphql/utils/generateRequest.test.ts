@@ -198,6 +198,20 @@ describe("generateRequest", () => {
     expect(result).toContain('input: { metadata: { region: "Kanto", badges: [ "Boulder", 8 ] } }');
   });
 
+  it("escapes GraphQL string values", () => {
+    const result = generateRequest("Pokemon", RequestMethod.Mutation, RequestOperation.Create, {
+      queryArguments: {
+        input: {
+          name: 'Pika "Chu"',
+          path: "C:\\Kanto\nLab",
+        },
+      },
+    });
+
+    expect(result).toContain('name: "Pika \\"Chu\\""');
+    expect(result).toContain('path: "C:\\\\Kanto\\nLab"');
+  });
+
   it("stringifies input array recursively", () => {
     const input = [{ name: "Charmander" }, { name: "Squirtle" }];
     const result = generateRequest("Pokemon", RequestMethod.Mutation, RequestOperation.Create, {

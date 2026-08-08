@@ -14,12 +14,31 @@ declare module "xlsx/xlsx.mjs" {
   export * from "xlsx";
 }
 
-declare module "../../utils/crypto/hmac-sha1.min.js" {
-  const CryptoJS: any;
-  export default CryptoJS;
+interface CryptoJsWordArray {
+  toString(encoder?: unknown): string;
+}
+
+interface CryptoJsModule {
+  lib: {
+    WordArray: {
+      random?: (length: number) => CryptoJsWordArray;
+    };
+  };
+  enc: {
+    Hex: {
+      parse(value: string): CryptoJsWordArray;
+    };
+    Base64: {
+      stringify(value: CryptoJsWordArray): string;
+    };
+  };
+  HmacSHA1(
+    message: string | CryptoJsWordArray,
+    key: string | CryptoJsWordArray,
+  ): CryptoJsWordArray;
 }
 
 declare module "*.min.js" {
-  const anyModule: any;
-  export default anyModule;
+  const CryptoJS: CryptoJsModule;
+  export default CryptoJS;
 }

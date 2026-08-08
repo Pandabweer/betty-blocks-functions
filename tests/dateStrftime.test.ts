@@ -66,7 +66,7 @@ describe("dateStrftime", () => {
 
   it("should handle numeric UNIX timestamp input", async () => {
     const timestamp = 1716912000;
-    const expectedDate = new Date(timestamp);
+    const expectedDate = new Date(timestamp * 1000);
     mockStrftime.mockReturnValue("timestamp-date");
 
     const result = await dateStrftime({
@@ -96,7 +96,13 @@ describe("dateStrftime", () => {
     });
 
     expect(result).toEqual({ as: "offset-date" });
-    expect(mockStrftime).toHaveBeenCalledWith("%x", "en", baseDate, 120, false);
+    expect(mockStrftime).toHaveBeenCalledWith(
+      "%x",
+      "en",
+      new Date("2024-06-01T12:00:00Z"),
+      0,
+      false,
+    );
   });
 
   it("should throw an error for missing custom format", async () => {
@@ -166,19 +172,43 @@ describe("dateStrftime", () => {
         strftimeDefault: "%Y",
       }),
     ).resolves.toEqual({ as: "unix-str" });
+
+    expect(mockStrftime).toHaveBeenCalledWith(
+      "%Y",
+      "en",
+      new Date("2024-05-28T16:00:00.000Z"),
+      0,
+      false,
+    );
+  });
+
+  it("parses millisecond timestamps consistently for strings and numbers", async () => {
+    const timestamp = 1716912000000;
+    mockStrftime.mockReturnValue("unix-ms");
+
+    await dateStrftime({
+      datetime: String(timestamp),
+      offsetType: "mm",
+      offset: 0,
+      useUtc: true,
+      locale: "en",
+      strftimeDefault: "%Y",
+    });
+
+    expect(mockStrftime).toHaveBeenCalledWith("%Y", "en", new Date(timestamp), 0, true);
   });
 
   const baseDate = new Date("2024-06-01T00:00:00Z");
 
   it.each([
-    ["ss", 60, 1],
-    ["mm", 15, 15],
-    ["hh", 2, 120],
-    ["DD", 1, 3600],
-    ["WW", 1, 21600],
-    ["MM", 1, 12960000],
-    ["YYYY", 1, 777600000],
-  ])("applies offsetType %s correctly", async (offsetType, offset, expectedOffset) => {
+    ["ss", 60, "2024-06-01T00:01:00.000Z"],
+    ["mm", 15, "2024-06-01T00:15:00.000Z"],
+    ["hh", 2, "2024-06-01T02:00:00.000Z"],
+    ["DD", 1, "2024-06-02T00:00:00.000Z"],
+    ["WW", 1, "2024-06-08T00:00:00.000Z"],
+    ["MM", 1, "2024-07-01T00:00:00.000Z"],
+    ["YYYY", 1, "2025-06-01T00:00:00.000Z"],
+  ])("applies offsetType %s correctly", async (offsetType, offset, expectedDate) => {
     mockStrftime.mockReturnValue("offset-test");
 
     const result = await dateStrftime({
@@ -191,7 +221,29 @@ describe("dateStrftime", () => {
     });
 
     expect(result).toEqual({ as: "offset-test" });
-    expect(mockStrftime).toHaveBeenCalledWith("%x", "en", baseDate, expectedOffset, false);
+    expect(mockStrftime).toHaveBeenCalledWith("%x", "en", new Date(expectedDate), 0, false);
+  });
+
+  it("uses calendar arithmetic for month offsets", async () => {
+    const endOfJanuary = new Date("2024-01-31T00:00:00Z");
+    mockStrftime.mockReturnValue("calendar-month");
+
+    await dateStrftime({
+      datetime: endOfJanuary,
+      offsetType: "MM",
+      offset: 1,
+      useUtc: true,
+      locale: "en",
+      strftimeDefault: "%x",
+    });
+
+    expect(mockStrftime).toHaveBeenCalledWith(
+      "%x",
+      "en",
+      new Date("2024-02-29T00:00:00Z"),
+      0,
+      true,
+    );
   });
 
   it("should throw an error for completely invalid datetime type", async () => {

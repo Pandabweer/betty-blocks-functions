@@ -4,7 +4,7 @@ Typescript flavoured betty functions! Enter `./src` and click on a function for 
 
 ## Requirements
 Node only installation:
-- Node V18.20.8
+- Node V26.7.0
 
 Recommended installation:
 - nvm (latest)

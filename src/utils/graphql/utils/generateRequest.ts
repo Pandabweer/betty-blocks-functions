@@ -47,7 +47,7 @@ function customStringify(obj: unknown): string {
   if (Array.isArray(obj)) {
     const items = obj.map((value) => {
       if (typeof value === "string") {
-        return `"${value}"`;
+        return JSON.stringify(value);
       } else if (typeof value === "object" && value !== null) {
         return customStringify(value);
       } else {
@@ -59,7 +59,7 @@ function customStringify(obj: unknown): string {
     const entries = Object.entries(obj).map(([key, value]) => {
       let valStr;
       if (typeof value === "string") {
-        valStr = `"${value}"`;
+        valStr = JSON.stringify(value);
       } else if (typeof value === "object" && value !== null) {
         valStr = customStringify(value);
       } else {
@@ -69,7 +69,7 @@ function customStringify(obj: unknown): string {
     });
     return `{ ${entries.join(", ")} }`;
   } else if (typeof obj === "string") {
-    return `"${obj}"`;
+    return JSON.stringify(obj);
   } else {
     return String(obj);
   }

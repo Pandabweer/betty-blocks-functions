@@ -1,4 +1,5 @@
 import { strftime } from "../../utils";
+import { addDays, addHours, addMinutes, addMonths, addSeconds, addWeeks, addYears } from "date-fns";
 
 interface DateStrftimeParams {
   datetime: Date | string | number;
@@ -37,11 +38,14 @@ const dateStrftime = async ({
       datetimeObject = new Date();
       break;
 
-    case (typeof datetime === "string" && /^\d+$/.test(datetime)) || typeof datetime === "number":
-      datetimeObject = new Date(
-        typeof datetime === "number" ? datetime : parseInt(datetime) * 1000,
-      );
+    case (typeof datetime === "string" && /^\d+$/.test(datetime)) || typeof datetime === "number": {
+      const timestamp = typeof datetime === "number" ? datetime : Number(datetime);
+      const timestampInMilliseconds = Math.abs(timestamp) < 1_000_000_000_000
+        ? timestamp * 1000
+        : timestamp;
+      datetimeObject = new Date(timestampInMilliseconds);
       break;
+    }
 
     case typeof datetime === "string":
       datetimeObject = new Date(datetime);
@@ -58,30 +62,30 @@ const dateStrftime = async ({
   if (offset && offsetType) {
     switch (offsetType) {
       case "ss":
-        offset = offset / 60;
+        datetimeObject = addSeconds(datetimeObject, offset);
         break;
       case "mm":
-        offset = offset;
+        datetimeObject = addMinutes(datetimeObject, offset);
         break;
       case "hh":
-        offset = offset * 60;
+        datetimeObject = addHours(datetimeObject, offset);
         break;
       case "DD":
-        offset = offset * 3600;
+        datetimeObject = addDays(datetimeObject, offset);
         break;
       case "WW":
-        offset = offset * 21600;
+        datetimeObject = addWeeks(datetimeObject, offset);
         break;
       case "MM":
-        offset = offset * 12_960_000;
+        datetimeObject = addMonths(datetimeObject, offset);
         break;
       case "YYYY":
-        offset = offset * 777_600_000;
+        datetimeObject = addYears(datetimeObject, offset);
         break;
     }
   }
 
-  return { as: strftime(strFormat, locale, datetimeObject, offset, useUtc) };
+  return { as: strftime(strFormat, locale, datetimeObject, 0, useUtc) };
 };
 
 export default dateStrftime;

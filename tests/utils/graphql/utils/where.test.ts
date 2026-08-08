@@ -57,6 +57,18 @@ describe("Graphql where", () => {
     expect(whereToString(simpleWhereObject)).toEqual(simpleWhereString);
   });
 
+  it("escapes string values in a where clause", () => {
+    const where = {
+      webuser: {
+        displayName: { eq: 'John "Johnny" Smith\nJr.' },
+      },
+    };
+
+    expect(whereToString(where)).toEqual(
+      'webuser: { displayName: { eq: "John \\"Johnny\\" Smith\\nJr." } }',
+    );
+  });
+
   it("should convert a complex object with _or to a string", () => {
     expect(whereToString(complexWhereObject)).toEqual(complexWhereString);
   });
